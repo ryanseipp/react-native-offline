@@ -1,9 +1,10 @@
 /* eslint flowtype/require-parameter-type: 0 */
+import { List } from 'immutable';
 import reducer, { initialState } from '../reducer';
 import * as actionCreators from '../actionCreators';
 
 describe('reducer', () => {
-  const getState = (isConnected = false, ...actionQueue) => ({
+  const getState = (isConnected = false, actionQueue = List()) => ({
     isConnected,
     actionQueue,
   });
@@ -24,7 +25,7 @@ describe('reducer', () => {
     const mockAction = actionCreators.connectionChange(false);
     expect(reducer(initialState, mockAction)).toEqual({
       isConnected: false,
-      actionQueue: [],
+      actionQueue: List(),
     });
   });
 
@@ -90,7 +91,7 @@ describe('reducer', () => {
 
       expect(reducer(prevState, action2)).toEqual({
         isConnected: false,
-        actionQueue: [prevActionToRetry1],
+        actionQueue: List.of(prevActionToRetry1),
       });
     });
 

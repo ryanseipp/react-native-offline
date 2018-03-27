@@ -2,6 +2,7 @@
 
 import { put, select, call, take, cancelled, fork } from 'redux-saga/effects';
 import { eventChannel } from 'redux-saga';
+import { List, getIn } from 'immutable';
 import { NetInfo } from 'react-native';
 import checkInternetAccess from './checkInternetAccess';
 import { connectionChange } from './actionCreators';
@@ -123,11 +124,13 @@ function* handleConnectivityChange(
   hasInternetAccess: boolean,
 ): Generator<*, *, *> {
   yield put(connectionChange(hasInternetAccess));
-  const actionQueue = yield select(
-    (state: { network: NetworkState }) => state.network.actionQueue,
+  const actionQueue = yield List(
+    select((state: { network: NetworkState }) =>
+      getIn(state, ['network', 'actionQueue']),
+    ),
   );
 
-  if (hasInternetAccess && actionQueue.length > 0) {
+  if (hasInternetAccess && actionQueue.size > 0) {
     // eslint-disable-next-line
     for (const action of actionQueue) {
       yield put(action);
