@@ -2,7 +2,6 @@
 import isEqual from 'lodash.isequal';
 import find from 'lodash.find';
 import get from 'lodash.get';
-import { getIn } from 'immutable';
 import {
   fetchOfflineMode,
   removeActionFromQueue,
@@ -37,8 +36,8 @@ function createNetworkMiddleware(
       throw new Error('You should pass an array as actionTypes param');
 
     const state = getState();
-    const isConnected = getIn(state, ['features', 'isConnected']);
-    const actionQueue = getIn(state, ['features', 'actionQueue']);
+    const isConnected = state.getIn(['features', 'isConnected']);
+    const actionQueue = state.getIn(['features', 'actionQueue']);
 
     const isObjectAndMatchCondition =
       typeof action === 'object' &&
