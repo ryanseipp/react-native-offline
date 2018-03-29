@@ -1,6 +1,7 @@
 /* @flow */
 
-import { get, isEqual, find, without } from 'lodash';
+import { get, isEqual } from 'lodash';
+import { Map, List } from 'immutable';
 import actionTypes from './actionTypes';
 import type {
   FluxAction,
@@ -9,10 +10,10 @@ import type {
   NetworkState,
 } from './types';
 
-export const initialState = {
+export const initialState = Map({
   isConnected: true,
-  actionQueue: [],
-};
+  actionQueue: List(),
+});
 
 function handleOfflineAction(
   state: NetworkState,
@@ -33,19 +34,14 @@ function handleOfflineAction(
     const actionWithMetaData = typeof actionToLookUp === 'object'
       ? { ...actionToLookUp, meta }
       : actionToLookUp;
-    const similarActionQueued = find(state.actionQueue, (action: *) =>
-      isEqual(action, actionWithMetaData),
-    );
 
-    return {
-      ...state,
-      actionQueue: similarActionQueued
-        ? [
-            ...without(state.actionQueue, similarActionQueued),
-            actionWithMetaData,
-          ]
-        : [...state.actionQueue, actionWithMetaData],
-    };
+    return state.withMutations((map: *) =>
+      map.update('actionQueue', (x: List<*>) =>
+        x
+          .filter((action: *) => isEqual(action, actionWithMetaData))
+          .push(actionWithMetaData),
+      ),
+    );
   }
   return state;
 }
@@ -54,29 +50,27 @@ function handleRemoveActionFromQueue(
   state: NetworkState,
   action: FluxActionForRemoval,
 ): NetworkState {
-  const similarActionQueued = find(state.actionQueue, (a: *) =>
-    isEqual(action, a),
+  return state.withMutations((map: *) =>
+    map.update('actionQueue', (x: List<*>) =>
+      x.filter((a: *) => isEqual(action, a)),
+    ),
   );
-
-  return {
-    ...state,
-    actionQueue: without(state.actionQueue, similarActionQueued),
-  };
 }
 
 function handleDismissActionsFromQueue(
   state: NetworkState,
   triggerActionToDismiss: string,
 ): NetworkState {
-  const newActionQueue = state.actionQueue.filter((action: FluxAction) => {
-    const dismissArray = get(action, 'meta.dismiss', []);
-    return !dismissArray.includes(triggerActionToDismiss);
-  });
+  const newActionQueue = List(
+    state.actionQueue.filter((action: FluxAction) => {
+      const dismissArray = get(action, 'meta.dismiss', []);
+      return !dismissArray.includes(triggerActionToDismiss);
+    }),
+  );
 
-  return {
-    ...state,
-    actionQueue: newActionQueue,
-  };
+  return state.withMutations((map: *) =>
+    map.set('actionQueue', newActionQueue),
+  );
 }
 
 export default function(

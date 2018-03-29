@@ -23,6 +23,7 @@ Check out [this medium article](https://blog.callstack.io/your-react-native-offl
   * [FAQ](#faq)
   * [Contributions](#contributions)
   * [Inspiration](#inspiration)
+  * [Fork](#fork)
   * [License](#license)
 
 ## Motivation
@@ -544,6 +545,9 @@ PRs are more than welcome. Please, submit an issue for discusing the feature bec
 
 ### Inspiration
 Thanks to Spencer Carli for his awesome article about [Handling Offline actions in React Native](https://medium.com/differential/handling-offline-actions-in-react-native-74949cbfabf2), which served me as inspiration for the offline queue implementation.
+
+### Fork
+This repository is a fork from [rauliyohmc/react-native-offline](https://github.com/rauliyohmc/react-native-offline). The only changes made to his code were to add immutable state support.
 
 ### License
 MIT

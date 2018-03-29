@@ -1,6 +1,7 @@
 /* @flow */
-
-import { find, get, isEqual } from 'lodash';
+import isEqual from 'lodash.isequal';
+import find from 'lodash.find';
+import get from 'lodash.get';
 import {
   fetchOfflineMode,
   removeActionFromQueue,
@@ -34,7 +35,9 @@ function createNetworkMiddleware(
     if ({}.toString.call(actionTypes) !== '[object Array]')
       throw new Error('You should pass an array as actionTypes param');
 
-    const { isConnected, actionQueue } = getState().network;
+    const state = getState();
+    const isConnected = state.getIn(['features', 'isConnected']);
+    const actionQueue = state.getIn(['features', 'actionQueue']);
 
     const isObjectAndMatchCondition =
       typeof action === 'object' &&
@@ -47,7 +50,7 @@ function createNetworkMiddleware(
       if (isConnected === false) {
         return next(fetchOfflineMode(action)); // Offline, preventing the original action from being dispatched. Dispatching an internal action instead.
       }
-      const actionQueued = actionQueue.length > 0
+      const actionQueued = actionQueue.size > 0
         ? find(actionQueue, (a: *) => isEqual(a, action))
         : null;
       if (actionQueued) {

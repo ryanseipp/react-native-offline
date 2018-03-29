@@ -33,5 +33,5 @@ export type FluxActionForDismissal = {
 
 export type NetworkState = {
   isConnected: boolean,
-  actionQueue: Array<*>,
+  actionQueue: List<*>,
 };

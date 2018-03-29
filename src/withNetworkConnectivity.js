@@ -124,7 +124,7 @@ const withNetworkConnectivity = (
           store.dispatch(connectionChange(isConnected));
         }
         // dispatching queued actions in order of arrival (if we have any)
-        if (isConnected && actionQueue.length > 0) {
+        if (isConnected && actionQueue.size > 0) {
           actionQueue.forEach((action: *) => {
             store.dispatch(action);
           });
